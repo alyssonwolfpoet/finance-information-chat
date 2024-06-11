@@ -20,7 +20,18 @@ def ui():
     if st.button("Buscar"):
         inforUsuario = selecionarUsuario(username)
         if inforUsuario is not None:
-            st.write(inforUsuario)
+            st.markdown(
+                f'''
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="{inforUsuario['avatar_url']}" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{inforUsuario['login']}</h5>
+                        <p class="card-text">{inforUsuario['bio']}</p>
+                        <a href="{inforUsuario['html_url']}" style="color: white; text-decoration: none;" class="btn btn-primary">ver perfil</a>
+                    </div>
+                </div>
+
+                ''', unsafe_allow_html=True)
 
 ui()
 
