@@ -21,10 +21,15 @@ def rasa(message, name):
 def returnText(message, name):
     response = rasa(message, name)
     if response:
-        texto = response[0]['text']
-        return texto
+        messages = []
+        for r in response:
+            if 'text' in r:
+                messages.append({"type": "text", "content": r['text']})
+            elif 'image' in r:
+                messages.append({"type": "image", "content": r['image']})
+        return messages
     else:
-        return "Desculpe, não consegui obter uma resposta no momento."
+        return [{"type": "text", "content": "Desculpe, não consegui obter uma resposta no momento."}]
 
 def ui():
     st.title("finance information chat")
@@ -36,8 +41,11 @@ def ui():
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        if message["type"] == "text":
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+        elif message["type"] == "image":
+            st.image(message["content"])
 
     # React to user input
     if prompt := st.chat_input("Digite aqui"):
@@ -45,15 +53,18 @@ def ui():
         with st.chat_message("user"):
             st.markdown(prompt)
         # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.session_state.messages.append({"role": "user", "content": prompt, "type": "text"})
 
         # Get bot response
         response = returnText(prompt, "alysson")
 
         # Display assistant response in chat message container
-        with st.chat_message("assistant"):
-            st.markdown(f"financito bot: {response}")
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": f"financito bot: {response}"})
-
+        for msg in response:
+            if msg["type"] == "text":
+                with st.chat_message("assistant"):
+                    st.markdown(f"financito bot: {msg['content']}")
+            elif msg["type"] == "image":
+                st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
+                st.image(msg["content"], caption="Image from bot")
+                
 ui()
