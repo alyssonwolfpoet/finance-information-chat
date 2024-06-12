@@ -3,31 +3,32 @@ import streamlit as st
 
 BASE_URL = "http://localhost:5005/webhooks/rest/webhook"
 
-def rasa(messege,name):
+def rasa(message, name):
     url = BASE_URL
     response = requests.post(
         url,
-        json=
-            {
-                "sender": "{name}",
-                "message": "{messege}" 
-            }
+        json={
+            "sender": name,
+            "message": message
+        }
     )
-    if response.status_code ==200:
+    if response.status_code == 200:
         return response.json()
     else:
+        st.error("Erro ao enviar mensagem para o servidor Rasa.")
         return None
 
-def returnText(messege):
-    response = rasa(messege,"alysson")
-    print(response)
-    texto = response[0]['text']
-    print(texto)
-    return texto
-    
+def returnText(message, name):
+    response = rasa(message, name)
+    if response:
+        texto = response[0]['text']
+        return texto
+    else:
+        return "Desculpe, não consegui obter uma resposta no momento."
+
 def ui():
     st.title("finance information chat")
-    st.write("Bem vindo! diga em que podemos ajudar🕵️‍♂️")
+    st.write("Bem vindo! Diga em que podemos ajudar 🕵️‍♂️")
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -38,7 +39,6 @@ def ui():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-
     # React to user input
     if prompt := st.chat_input("Digite aqui"):
         # Display user message in chat message container
@@ -47,12 +47,13 @@ def ui():
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
 
+        # Get bot response
+        response = returnText(prompt, "alysson")
 
-    response = f"financito bot: {returnText(prompt)}"
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        st.markdown(response)
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            st.markdown(f"financito bot: {response}")
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": f"financito bot: {response}"})
 
 ui()
