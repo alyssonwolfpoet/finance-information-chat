@@ -38,6 +38,7 @@ def ui():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+
     # React to user input
     if prompt := st.chat_input("Digite aqui"):
         # Display user message in chat message container
@@ -45,6 +46,7 @@ def ui():
             st.markdown(prompt)
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
+
 
     response = f"financito bot: {returnText(prompt)}"
     # Display assistant response in chat message container
