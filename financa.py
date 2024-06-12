@@ -61,8 +61,10 @@ def ui():
         # Display assistant response in chat message container
         for msg in response:
             if msg["type"] == "text":
+                st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "text"})
                 with st.chat_message("assistant"):
                     st.markdown(f"financito bot: {msg['content']}")
+                
             elif msg["type"] == "image":
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
