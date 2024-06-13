@@ -1,5 +1,16 @@
+version: '3.7'
+include:
+   - infra.yaml
 services:
-  web:
-    build: .
-    ports:
-      - "8000:5000"
+    app:
+        build: ./
+        command: streamlit run financa.py --server.port 8501
+        volumes:
+            - ./:/usr/src/app
+        ports:
+            - 8501:8501
+        image: yourstreamlitapp:latest
+        networks:
+            rasa-networks:
+networks:
+  rasa-networks:
