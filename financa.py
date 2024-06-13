@@ -3,21 +3,6 @@ import streamlit as st
 
 BASE_URL = "http://localhost:5005/webhooks/rest/webhook"
 
-def rasa(message, name):
-    url = BASE_URL
-    response = requests.post(
-        url,
-        json={
-            "sender": name,
-            "message": message
-        }
-    )
-    if response.status_code == 200:
-        return response.json()
-    else:
-        st.error("Erro ao enviar mensagem para o servidor Rasa.")
-        return None
-
 def returnText(message, name):
     response = rasa(message, name)
     if response:
@@ -25,6 +10,11 @@ def returnText(message, name):
         for r in response:
             if 'text' in r:
                 messages.append({"type": "text", "content": r['text']})
+            elif 'buttons' in r:
+                buttons = []
+                for button in r['buttons']:
+                    buttons.append(button['title'])
+                messages.append({"type": "buttons", "content": buttons})
             elif 'image' in r:
                 messages.append({"type": "image", "content": r['image']})
         return messages
@@ -44,6 +34,8 @@ def ui():
         if message["type"] == "text":
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
+        elif message["type"] == "buttons":
+            st.write(message["content"])  # Renderizando os botões
         elif message["type"] == "image":
             st.image(message["content"])
 
@@ -64,9 +56,8 @@ def ui():
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "text"})
                 with st.chat_message("assistant"):
                     st.markdown(f"financito bot: {msg['content']}")
-                
             elif msg["type"] == "image":
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
-                
+
 ui()
