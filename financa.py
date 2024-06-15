@@ -31,8 +31,8 @@ def returnText(message, name):
                 #print(r["buttons"])  
                 for button in r['buttons']:
                     buttons.append(button['title'])
-                for i in buttons:
-                    print(i)
+                #for i in buttons:
+                    #print(i)
                 messages.append({"type": "buttons", "content": buttons})
             if 'image' in r:
                 messages.append({"type": "image", "content": r['image']})       
@@ -54,8 +54,8 @@ def ui():
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
         elif message["type"] == "buttons":
-            print(message,"messege spacy")
-            st.write(message["content"])  # Renderizando os botões
+            #print(message,"messege spacy")
+            st.write(message["content"])  # Renderizando os 
         elif message["type"] == "image":
             st.image(message["content"])
 
@@ -69,7 +69,7 @@ def ui():
 
         # Get bot response
         response = returnText(prompt, "alysson")
-        print(response)
+        #print(response)
 
         # Display assistant response in chat message container
         for msg in response:
@@ -80,7 +80,7 @@ def ui():
             elif msg["type"] == "image":
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
-            if msg["type"] == "buttons":
-                st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "buttons"})
-                st.button(msg["content"], caption="buton from bot")
+            elif msg["type"] == "buttons":
+                for i in msg["content"]:
+                    st.button(i)
 ui()
