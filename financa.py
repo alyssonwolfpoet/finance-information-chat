@@ -40,6 +40,14 @@ def returnText(message, name):
     else:
         return [{"type": "text", "content": "Desculpe, não consegui obter uma resposta no momento."}]
 
+# Função para exibir os botões
+def display_buttons(buttons, chat_index):
+    num_buttons = len(buttons)
+    for idx, button in enumerate(buttons):
+        if st.button(button["title"], key=f"button_{chat_index}_{idx}"):
+            response = send_message(button["payload"])
+            st.session_state.history.append({"user": button["title"], "bot": response})
+
 def ui():
     st.title("finance information chat")
     st.write("Bem vindo! Diga em que podemos ajudar 🕵️‍♂️")
@@ -53,10 +61,10 @@ def ui():
         if message["type"] == "text":
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
-        elif message["type"] == "buttons":
+        if message["type"] == "buttons":
             #print(message,"messege spacy")
             st.write(message["content"])  # Renderizando os 
-        elif message["type"] == "image":
+        if message["type"] == "image":
             st.image(message["content"])
 
     # React to user input
@@ -81,6 +89,7 @@ def ui():
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
             elif msg["type"] == "buttons":
-                for i in msg["content"]:
-                    st.button(i)
+                i = msg["content"]
+                st.session_state.messages.append({"role": "user", "content": i, "type": "butoons"})
+                   
 ui()
