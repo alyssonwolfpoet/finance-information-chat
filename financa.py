@@ -20,6 +20,7 @@ def rasa(message, name):
 
 def returnText(message, name):
     response = rasa(message, name)
+    #print(response)
     if response:
         messages = []
         for r in response:
@@ -27,13 +28,18 @@ def returnText(message, name):
                 messages.append({"type": "text", "content": r['text']})
             if 'buttons' in r:
                 buttons = []
+                payloads = []
                 #print("so deus sabe")
                 #print(r["buttons"])  
                 for button in r['buttons']:
                     buttons.append(button['title'])
+                #for payload in r['buttons']:
+                   #payloads.append(payload['payload'])
                 #for i in buttons:
                     #print(i)
-                messages.append({"type": "buttons", "content": buttons})
+                messages.append({"type": "buttons", "content": r['buttons']})
+                #messages.append({"type": "payload", "content": payloads})
+
             if 'image' in r:
                 messages.append({"type": "image", "content": r['image']})       
         return messages
@@ -41,13 +47,15 @@ def returnText(message, name):
         return [{"type": "text", "content": "Desculpe, não consegui obter uma resposta no momento."}]
 
 # Função para exibir os botões
-def display_buttons(buttons, chat_index):
-    num_buttons = len(buttons)
-    for idx, button in enumerate(buttons):
-        if st.button(button["title"], key=f"button_{chat_index}_{idx}"):
-            response = send_message(button["payload"])
-            st.session_state.history.append({"user": button["title"], "bot": response})
+def display_buttons(buttons):
+    print("\n\n",buttons,"\n\n")
+    for i in buttons:
+        if st.button(i['title']):
+            #st.write(i['payload'])
+            response = returnText(i['payload'])
+            return response
 
+    
 def ui():
     st.title("finance information chat")
     st.write("Bem vindo! Diga em que podemos ajudar 🕵️‍♂️")
@@ -77,7 +85,7 @@ def ui():
 
         # Get bot response
         response = returnText(prompt, "alysson")
-        #print(response)
+        print(response,"\n\n")
 
         # Display assistant response in chat message container
         for msg in response:
@@ -89,7 +97,15 @@ def ui():
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
             elif msg["type"] == "buttons":
+                #st.write(response)
+                #a = "" 
+                #for pay in response:
+                        #if pay["type"] == "payload":
+                            #a = pay
+                #st.write(a)
                 i = msg["content"]
-                st.session_state.messages.append({"role": "user", "content": i, "type": "butoons"})
+                res = display_buttons(i)
+                st.write(res)
+                st.session_state.messages.append({"role": "assistant", "content": res, "type": "buttons"})
                    
 ui()
