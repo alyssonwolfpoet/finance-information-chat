@@ -49,11 +49,29 @@ def returnText(message, name):
 # Função para exibir os botões
 def display_buttons(buttons):
     print("\n\n",buttons,"\n\n")
+    
     for i in buttons:
+        #print(i)
+        # if st.button(i['title']):
+        #      print("bnt if")
+        #      #st.write(i['payload'])
+        #      response = returnText(i['payload'])
+        #      return response
+
+        # if i["title"] == "EUA":
+        #     with st.chat_message("user"):
+        #         prompt = "EUA"
+        #         st.markdown(prompt)
+        #         # Add user message to chat history
+        #         st.session_state.messages.append({"role": "user", "content": prompt, "type": "text"})
+
         if st.button(i['title']):
-            #st.write(i['payload'])
-            response = returnText(i['payload'])
-            return response
+            print(i['title'])
+            with st.chat_message("user"):
+                prompt = i['title']
+                st.markdown(prompt)
+                # Add user message to chat history
+                st.session_state.messages.append({"role": "user", "content": prompt, "type": "text"})
 
     
 def ui():
@@ -105,7 +123,7 @@ def ui():
                 #st.write(a)
                 i = msg["content"]
                 res = display_buttons(i)
-                st.write(res)
-                st.session_state.messages.append({"role": "assistant", "content": res, "type": "buttons"})
+                #st.write(res),"fim"
+                st.session_state.messages.append({"role": "assistant", "content": res, "type": "text"})
                    
 ui()
