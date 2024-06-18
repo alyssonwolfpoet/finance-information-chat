@@ -31,5 +31,5 @@ def main():
             response = send_message(message)
             handle_response(response)
 
-if __name_ == '__main__':
+if __name__ == '__main__':
     main()
