@@ -54,23 +54,25 @@ def ui():
         elif message["type"] == "image":
             st.image(message["content"])
         elif message["type"] == "buttons":
+            statu = 0
             response = returnText(message["content"],"Alysson")
-            st.write(message)
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-                
-            # Get bot response
+            #if statu == 0:
+                #st.write(message)
+                #with st.chat_message(message["role"]):
+                    #st.markdown(message["content"])
+            #statu = 1
+            #if statu == 1:  
+                # Get bot response
             response = returnText(message["content"], "alysson")
             print(response)
-            # Display assistant response in chat message container
-            for msg in response:  
+                # Display assistant response in chat message container
+            for msg in response:
                 if msg["type"] == "buttons":
                     buttons = msg['content']
                     for button in buttons:
                         if 'title' in button and 'payload' in button:
-                            st.button(button['title'], key=button['title'], on_click= st.session_state.messages.append({"role": "user", "content": button['payload'], "type": "buttons"}))
-                    
-
+                            st.button(button['title'], key=button['title'], on_click= st.session_state.messages.append({"role": "user", "content": button['payload'], "type": "buttons"})) 
+               # statu = 0
     # React to user input
     if prompt := st.chat_input("Digite aqui"):
         # Display user message in chat message container
@@ -87,8 +89,7 @@ def ui():
             if msg["type"] == "text":
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "text"})
                 with st.chat_message("assistant"):
-                    st.markdown(f"financito bot: {msg['content']}")
-                
+                    st.markdown(f"financito bot: {msg['content']}")  
             elif msg["type"] == "image":
                 st.session_state.messages.append({"role": "assistant", "content": msg["content"], "type": "image"})
                 st.image(msg["content"], caption="Image from bot")
